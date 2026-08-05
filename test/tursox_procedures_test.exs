@@ -1,8 +1,7 @@
-defmodule TursoxProceduresTest do
-  use ExUnit.Case
-  doctest TursoxProcedures
+defmodule Tursox.ProceduresTest do
+  use ExUnit.Case, async: true
 
-  test "greets the world" do
-    assert TursoxProcedures.hello() == :world
+  test "loads the companion-package namespace" do
+    assert Code.ensure_loaded?(Tursox.Procedures)
   end
 end

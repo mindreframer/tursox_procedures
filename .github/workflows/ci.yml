@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  qa:
+    name: Logic QA
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
+        with:
+          elixir-version: "1.20.1"
+          otp-version: "28.3"
+
+      - name: Cache Mix builds
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            deps
+            _build
+            ~/.hex
+          key: ${{ runner.os }}-qa-v1-otp28-elixir1.20-${{ hashFiles('mix.lock') }}
+
+      - name: Fetch dependencies
+        run: |
+          mix local.hex --force
+          MIX_ENV=test mix deps.get
+          MIX_ENV=dev mix deps.get
+
+      - name: Quality gate
+        run: bin/qa_check.sh
