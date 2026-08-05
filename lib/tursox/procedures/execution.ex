@@ -23,7 +23,14 @@ defmodule Tursox.Procedures.Execution do
       caller: Keyword.get(options, :caller),
       duplicate_columns: Keyword.get(options, :duplicate_columns, :error),
       deadline: now + limits.timeout,
-      counters: %{procedure_calls: 0, statements: 0, rows: 0, database_bytes: 0},
+      counters: %{
+        procedure_calls: 0,
+        statements: 0,
+        rows: 0,
+        database_bytes: 0,
+        argument_bytes: 0,
+        result_bytes: 0
+      },
       stack: [],
       trace: [],
       failed: nil
@@ -50,6 +57,14 @@ defmodule Tursox.Procedures.Execution do
 
   def failed?(handle), do: state(handle).failed != nil
   def error(handle), do: state(handle).failed
+
+  def ensure_active(handle) do
+    case error(handle) do
+      nil -> :ok
+      error -> {:error, error}
+    end
+  end
+
   def trace(handle), do: Enum.reverse(state(handle).trace)
   def stack(handle), do: state(handle).stack
 
@@ -157,6 +172,8 @@ defmodule Tursox.Procedures.Execution do
   defp limit_for(%Limits{} = limits, :statements), do: limits.max_statements
   defp limit_for(%Limits{} = limits, :rows), do: limits.max_rows
   defp limit_for(%Limits{} = limits, :database_bytes), do: limits.max_database_bytes
+  defp limit_for(%Limits{} = limits, :argument_bytes), do: limits.max_argument_bytes
+  defp limit_for(%Limits{} = limits, :result_bytes), do: limits.max_result_bytes
 
   defp limit_error(handle, code, operation, message) do
     procedure = current_procedure(handle)

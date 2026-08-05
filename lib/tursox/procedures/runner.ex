@@ -71,16 +71,25 @@ defmodule Tursox.Procedures.Runner do
     state = Execution.state(handle)
     {source_module, source_state} = state.source
 
-    with :ok <- Execution.check_deadline(handle),
+    with :ok <- Execution.ensure_active(handle),
+         :ok <- Execution.check_deadline(handle),
+         :ok <- Execution.charge(handle, :argument_bytes, encoded_bytes(arguments)),
          :ok <- Execution.charge(handle, :procedure_calls, 1),
          {:ok, procedure} <- source_module.fetch(source_state, state.connection, name),
+         :ok <- validate_nesting(handle, procedure),
          :ok <- Execution.authorize(handle, :call, %{callee: trace_entry(procedure)}) do
       Execution.push(handle, procedure)
 
       try do
         case Runtime.execute(state.cache, procedure, arguments, handle, state.limits) do
-          {:ok, value} -> {:ok, value}
-          {:error, error} -> Execution.fail(handle, decorate_error(error, handle))
+          {:ok, value} ->
+            case Execution.charge(handle, :result_bytes, encoded_bytes(value)) do
+              :ok -> {:ok, value}
+              {:error, error} -> {:error, error}
+            end
+
+          {:error, error} ->
+            Execution.fail(handle, decorate_error(error, handle))
         end
       after
         Execution.pop(handle)
@@ -88,6 +97,33 @@ defmodule Tursox.Procedures.Runner do
     else
       {:error, %Error{} = error} -> Execution.fail(handle, decorate_error(error, handle))
       {:error, error} -> Execution.fail(handle, database_error(error, name))
+    end
+  end
+
+  defp validate_nesting(handle, procedure) do
+    state = Execution.state(handle)
+
+    cond do
+      Enum.any?(state.stack, &(&1.name == procedure.name)) ->
+        Execution.fail(handle, %Error{
+          code: :call_cycle,
+          operation: :nested_call,
+          message: "procedure call cycle detected",
+          procedure: procedure.name,
+          version: procedure.version
+        })
+
+      length(state.stack) >= state.limits.max_procedure_depth ->
+        Execution.fail(handle, %Error{
+          code: :call_depth,
+          operation: :nested_call,
+          message: "procedure call depth exceeded",
+          procedure: procedure.name,
+          version: procedure.version
+        })
+
+      true ->
+        :ok
     end
   end
 
@@ -176,6 +212,8 @@ defmodule Tursox.Procedures.Runner do
   defp shape(value) when is_tuple(value), do: {:tuple, tuple_size(value)}
   defp shape(value) when is_atom(value), do: value
   defp shape(_value), do: :other
+
+  defp encoded_bytes(value), do: byte_size(:erlang.term_to_binary(value))
 
   defp trace_entry(procedure),
     do: %{name: procedure.name, version: procedure.version, source_hash: procedure.source_hash}

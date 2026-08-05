@@ -7,13 +7,13 @@ Phase 5.1; findings F2, F5, and F6 are binding.
 
 ## Progress
 
-- [ ] Phase 5.1: Define child resolution, stack, version trace, strict failure, cycle, and budget semantics.
-- [ ] Phase 5.2: Implement `procedures.call` through the internal runner and existing execution context.
-- [ ] Phase 5.3: Reuse the exact parent checkout/transaction while creating an isolated child Lua VM.
-- [ ] Phase 5.4: Propagate caller/policy and record exact immutable identities for the complete call tree.
-- [ ] Phase 5.5: Enforce cycles, depth, total calls, deadline, statements, rows, bytes, and result budgets across children.
-- [ ] Phase 5.6: Prove strict rollback after every child failure, including Lua-caught failures and pool size one.
-- [ ] Phase 5.7: Pass the epic gate and create the focused Epic 5 commit.
+- [x] Phase 5.1: Define child resolution, stack, version trace, strict failure, cycle, and budget semantics.
+- [x] Phase 5.2: Implement `procedures.call` through the internal runner and existing execution context.
+- [x] Phase 5.3: Reuse the exact parent checkout/transaction while creating an isolated child Lua VM.
+- [x] Phase 5.4: Propagate caller/policy and record exact immutable identities for the complete call tree.
+- [x] Phase 5.5: Enforce cycles, depth, total calls, deadline, statements, rows, bytes, and result budgets across children.
+- [x] Phase 5.6: Prove strict rollback after every child failure, including Lua-caught failures and pool size one.
+- [x] Phase 5.7: Pass the epic gate and create the focused Epic 5 commit.
 
 ## Implementation Steps
 
@@ -27,11 +27,11 @@ Phase 5.1; findings F2, F5, and F6 are binding.
 
 ## Quality Gate
 
-- [ ] Nested writes are atomic with the outer call.
-- [ ] Pool size one composition performs no second checkout/deadlock.
-- [ ] Any child failure prevents commit even when Lua catches its error.
-- [ ] Cycles/depth/count and aggregate budgets are enforced.
-- [ ] Policy and execution context cannot be escalated or leaked.
+- [x] Nested writes are atomic with the outer call.
+- [x] Pool size one composition performs no second checkout/deadlock.
+- [x] Any child failure prevents commit even when Lua catches its error.
+- [x] Cycles/depth/count and aggregate budgets are enforced.
+- [x] Policy and execution context cannot be escalated or leaked.
 
 ## Commit Rule
 

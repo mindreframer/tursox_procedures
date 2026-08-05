@@ -34,6 +34,7 @@ defmodule Tursox.Procedures.LuaAPI.Database do
 
     result =
       with %Execution.Handle{} <- handle,
+           :ok <- Execution.ensure_active(handle),
            :ok <- validate_sql(sql, mode),
            {:ok, parameters} <- decode_parameters(lua, encoded_parameters),
            :ok <- Execution.check_deadline(handle),

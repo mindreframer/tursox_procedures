@@ -2,7 +2,7 @@ defmodule Tursox.Procedures.Runtime do
   @moduledoc "Isolated, finite Deflua execution for one immutable procedure."
 
   alias Tursox.Procedures.{Cache, Error, Execution, Limits, Procedure}
-  alias Tursox.Procedures.LuaAPI.{Core, Database}
+  alias Tursox.Procedures.LuaAPI.{Core, Database, Procedures}
 
   @failure_prefix "__tursox_fail__"
 
@@ -20,6 +20,7 @@ defmodule Tursox.Procedures.Runtime do
         |> Lua.put_private(:procedure_context, private_context)
         |> Lua.load_api(Core)
         |> Lua.load_api(Database)
+        |> Lua.load_api(Procedures)
         |> Lua.set!([:args], arguments)
 
       run(lua, chunk, procedure, limits, private_context)
