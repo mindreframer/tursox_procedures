@@ -1,7 +1,7 @@
 defmodule Tursox.Procedures.Runner do
   @moduledoc false
 
-  alias Tursox.Procedures.{Error, Execution, Limits, Result, Runtime, Validation}
+  alias Tursox.Procedures.{Error, Execution, Limits, Result, Runtime, Telemetry, Validation}
 
   def call(pool, source, cache, name, arguments, options \\ []) do
     started = System.monotonic_time()
@@ -68,6 +68,20 @@ defmodule Tursox.Procedures.Runner do
   end
 
   def run_one(handle, name, arguments) do
+    started = System.monotonic_time()
+    depth = length(Execution.stack(handle))
+    result = do_run_one(handle, name, arguments)
+
+    Telemetry.execute(
+      [:procedure, :stop],
+      %{duration: System.monotonic_time() - started},
+      %{procedure: name, depth: depth, outcome: procedure_outcome(result)}
+    )
+
+    result
+  end
+
+  defp do_run_one(handle, name, arguments) do
     state = Execution.state(handle)
     {source_module, source_state} = state.source
 
@@ -205,6 +219,9 @@ defmodule Tursox.Procedures.Runner do
       metadata: %{class: error_class(error)}
     }
   end
+
+  defp procedure_outcome({:ok, _value}), do: :ok
+  defp procedure_outcome({:error, %Error{code: code}}), do: code
 
   defp error_class(%{code: code}) when is_atom(code), do: code
   defp error_class(%{__struct__: module}), do: module

@@ -3,7 +3,7 @@ defmodule Tursox.Procedures.LuaAPI.Database do
 
   use Lua.API, scope: "db"
 
-  alias Tursox.Procedures.{Error, Execution, Runtime}
+  alias Tursox.Procedures.{Error, Execution, Runtime, Telemetry}
 
   deflua one(sql, parameters), lua do
     database_call(lua, :query, sql, parameters, :one)
@@ -31,6 +31,7 @@ defmodule Tursox.Procedures.LuaAPI.Database do
 
   defp database_call(lua, operation, sql, encoded_parameters, mode) do
     handle = Lua.get_private!(lua, :procedure_context)
+    started = System.monotonic_time()
 
     result =
       with %Execution.Handle{} <- handle,
@@ -47,6 +48,12 @@ defmodule Tursox.Procedures.LuaAPI.Database do
         {:error, %Error{} = error} -> Execution.fail(handle, error)
         _ -> Execution.fail(handle, invalid("database API received invalid arguments"))
       end
+
+    Telemetry.execute(
+      [:database, :stop],
+      %{duration: System.monotonic_time() - started},
+      %{operation: operation, outcome: database_outcome(result)}
+    )
 
     case result do
       {:ok, value} -> Lua.encode_list!(lua, [encode_database_value(value)])
@@ -256,6 +263,9 @@ defmodule Tursox.Procedures.LuaAPI.Database do
 
     Execution.fail(handle, wrapped)
   end
+
+  defp database_outcome({:ok, _value}), do: :ok
+  defp database_outcome({:error, %Error{code: code}}), do: code
 
   defp error_class(%{code: code}) when is_atom(code), do: code
   defp error_class(%{__struct__: module}), do: module

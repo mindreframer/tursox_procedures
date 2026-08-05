@@ -3,7 +3,7 @@ defmodule Tursox.Procedures.Cache do
 
   use GenServer
 
-  alias Tursox.Procedures.{Error, Procedure, Validation}
+  alias Tursox.Procedures.{Error, Procedure, Telemetry, Validation}
 
   def start_link(options \\ []) do
     GenServer.start_link(__MODULE__, options, Keyword.take(options, [:name]))
@@ -38,6 +38,7 @@ defmodule Tursox.Procedures.Cache do
     case Map.fetch(state.entries, identity) do
       {:ok, {chunk, _last_tick}} ->
         entries = Map.put(state.entries, identity, {chunk, tick})
+        Telemetry.execute([:cache, :stop], %{count: 1}, cache_metadata(procedure, :hit))
         {:reply, {:ok, chunk}, %{state | entries: entries, tick: tick, hits: state.hits + 1}}
 
       :error ->
@@ -45,6 +46,8 @@ defmodule Tursox.Procedures.Cache do
           {:ok, chunk} ->
             {entries, evicted?} =
               put_bounded(state.entries, identity, chunk, tick, state.capacity)
+
+            Telemetry.execute([:cache, :stop], %{count: 1}, cache_metadata(procedure, :miss))
 
             {:reply, {:ok, chunk},
              %{
@@ -56,6 +59,7 @@ defmodule Tursox.Procedures.Cache do
              }}
 
           {:error, error} ->
+            Telemetry.execute([:cache, :stop], %{count: 1}, cache_metadata(procedure, error.code))
             {:reply, {:error, error}, %{state | tick: tick, misses: state.misses + 1}}
         end
     end
@@ -124,6 +128,15 @@ defmodule Tursox.Procedures.Cache do
       {oldest, _value} = Enum.min_by(entries, fn {_identity, {_chunk, used}} -> used end)
       {Map.delete(entries, oldest), true}
     end
+  end
+
+  defp cache_metadata(procedure, outcome) do
+    %{
+      procedure: procedure.name,
+      version: procedure.version,
+      source_hash: procedure.source_hash,
+      outcome: outcome
+    }
   end
 
   defp exception_line(exception) do

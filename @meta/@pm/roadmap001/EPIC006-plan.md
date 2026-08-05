@@ -7,13 +7,13 @@ Phase 6.1.
 
 ## Progress
 
-- [ ] Phase 6.1: Define caller-owned supervision, naming, configuration, shutdown, and call-process contracts.
-- [ ] Phase 6.2: Implement pid/name-addressed services with no global singleton or dynamic atoms.
-- [ ] Phase 6.3: Add bounded compiled cache ownership, concurrent compile control, eviction, and refresh behavior.
-- [ ] Phase 6.4: Complete policy hooks and caller/procedure/capability context propagation.
-- [ ] Phase 6.5: Add supervised deadlines/heap policy, rollback cleanup, telemetry, and redacted status.
-- [ ] Phase 6.6: Stress multiple services, concurrency, updates, cache churn, failures, and shutdown races.
-- [ ] Phase 6.7: Pass the epic gate and create the focused Epic 6 commit.
+- [x] Phase 6.1: Define caller-owned supervision, naming, configuration, shutdown, and call-process contracts.
+- [x] Phase 6.2: Implement pid/name-addressed services with no global singleton or dynamic atoms.
+- [x] Phase 6.3: Add bounded compiled cache ownership, concurrent compile control, eviction, and refresh behavior.
+- [x] Phase 6.4: Complete policy hooks and caller/procedure/capability context propagation.
+- [x] Phase 6.5: Add supervised deadlines/heap policy, rollback cleanup, telemetry, and redacted status.
+- [x] Phase 6.6: Stress multiple services, concurrency, updates, cache churn, failures, and shutdown races.
+- [x] Phase 6.7: Pass the epic gate and create the focused Epic 6 commit.
 
 ## Implementation Steps
 
@@ -27,11 +27,11 @@ Phase 6.1.
 
 ## Quality Gate
 
-- [ ] Multiple services remain isolated and require explicit startup.
-- [ ] Cache size/concurrency/eviction are bounded and correctness-neutral.
-- [ ] Timeout/heap failures roll back and service/pool recover.
-- [ ] Policy sees every relevant boundary.
-- [ ] Telemetry/status contain no procedure or database values.
+- [x] Multiple services remain isolated and require explicit startup.
+- [x] Cache size/concurrency/eviction are bounded and correctness-neutral.
+- [x] Timeout/heap failures roll back and service/pool recover.
+- [x] Policy sees every relevant boundary.
+- [x] Telemetry/status contain no procedure or database values.
 
 ## Commit Rule
 
