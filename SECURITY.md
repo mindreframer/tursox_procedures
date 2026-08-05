@@ -5,13 +5,15 @@ Report suspected vulnerabilities privately to the maintainer listed in
 bound values, credentials, or tenant data unless an encrypted channel has been
 agreed first.
 
-The planned package executes user-supplied Lua and must not treat language
-sandboxing as database authorization. Procedure calls require finite execution,
-heap, statement, result, nesting, and wall-clock bounds. Host filesystem,
-network, process, module-loading, and environment capabilities remain disabled.
-Database capabilities must be explicitly authorized for the caller and
-procedure; raw SQL access is equivalent to the privileges of the checked-out
-Tursox connection.
+Tursox Procedures executes user-supplied Lua. Deflua's language sandbox blocks
+host filesystem, network/process, environment, and module-loading access, but it
+is not a database authorization boundary. Every deployment must choose a policy
+appropriate to its procedure authors. `Policy.AllowAll` grants the configured
+Tursox connection's raw SQL authority and is only appropriate for trusted code.
 
-Until ROADMAP001 is complete, this repository provides no production procedure
-execution boundary.
+Keep finite execution, heap, statement, result, nesting, and wall-clock limits.
+Do not expose procedure administration to unauthorized callers. Prefer separate
+databases or domain-specific capabilities where authors must not access all
+tables. Errors, inspection, and telemetry are designed to exclude source,
+arguments, SQL parameters, rows, results, and caller secrets; reports should
+still be reviewed before sharing.

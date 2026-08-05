@@ -7,12 +7,12 @@ inspect exact dependency licenses and current Hex/GitHub release guidance.
 
 ## Progress
 
-- [ ] Phase 7.1: Stabilize public names, options, errors, results, compatibility, and security claims.
-- [ ] Phase 7.2: Add adversarial sandbox/authorization/resource/concurrency/fault and fuzz coverage.
-- [ ] Phase 7.3: Complete executable README, catalog, Lua API, composition, policy, limits, and operations guides.
-- [ ] Phase 7.4: Audit telemetry/errors/inspection, package contents, licenses/notices, and dependency graph.
-- [ ] Phase 7.5: Add clean unpacked-package consumer and final CI/release automation.
-- [ ] Phase 7.6: Synchronize `0.1.0`, changelog/docs/examples, and verify a clean Hex-resolvable install.
+- [x] Phase 7.1: Stabilize public names, options, errors, results, compatibility, and security claims.
+- [x] Phase 7.2: Add adversarial sandbox/authorization/resource/concurrency/fault and fuzz coverage.
+- [x] Phase 7.3: Complete executable README, catalog, Lua API, composition, policy, limits, and operations guides.
+- [x] Phase 7.4: Audit telemetry/errors/inspection, package contents, licenses/notices, and dependency graph.
+- [x] Phase 7.5: Add clean unpacked-package consumer and final CI/release automation.
+- [x] Phase 7.6: Synchronize `0.1.0`, changelog/docs/examples, and verify a clean Hex-resolvable install.
 - [ ] Phase 7.7: Pass final QA, publish GitHub/Hex/HexDocs, monitor verification, and create the focused Epic 7 commit.
 
 ## Implementation Steps

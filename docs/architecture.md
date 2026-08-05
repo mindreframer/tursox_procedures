@@ -1,29 +1,34 @@
 # Architecture
 
-Tursox Procedures is a standalone companion to Tursox. It stores or resolves
-user-defined Lua source, compiles it with the pure-Elixir `lua` runtime, and
-executes it through a deliberately small database capability surface.
+Tursox Procedures is a standalone companion to Tursox. It resolves versioned
+Lua source, compiles it with the pure-Elixir `lua` runtime, and executes it
+through a deliberately small database capability surface.
 
 ```text
-Application
-    └── Tursox.Procedures.call/4
-          ├── Source (database or memory)
-          ├── compiled chunk cache
-          ├── isolated Lua VM
-          │     ├── db.one / db.all / db.exec
-          │     ├── procedures.call
-          │     └── fail
-          └── Tursox.Pool.transaction/3
-                └── one checked-out connection for the complete call tree
+Application supervisor
+    ├── Tursox.Pool
+    ├── Procedure Source (database or memory)
+    └── Tursox.Procedures service
+          ├── bounded immutable chunk cache
+          └── monitored worker per top-level call
+                ├── one Tursox.Pool.transaction checkout
+                ├── opaque execution context and aggregate budgets
+                └── fresh Lua VM per procedure
+                      ├── db.one / db.all / db.exec
+                      ├── db.blob / db.null
+                      ├── procedures.call
+                      └── fail
 ```
 
-The top-level host call owns the transaction. Nested procedures share the same
-checked-out connection and never begin, commit, or roll back independently.
-Any nested failure makes the outer transaction uncommittable in the initial
-contract.
+The service GenServer owns configuration, cache, worker monitors, and timeout
+handling; it does not execute user code. Calls therefore run concurrently. A
+worker stores its opaque transaction context in process-local state, inaccessible
+to Lua except through registered host APIs.
 
-Procedure source may be persisted, but execution remains an application-level
-concern. This package will not modify Turso's parser, add SQL `CALL` syntax, or
-load a scripting VM into Turso's native process boundary.
+The top-level host owns the transaction. Nested procedures invoke the internal
+runner with the same checkout and never recursively enter the public service.
+Any nested failure makes the transaction uncommittable in 0.1.x.
 
-See `@meta/@pm/ROADMAP001.md` for the planned contracts and acceptance gates.
+Procedure source may be persisted, but execution remains application-level.
+The package does not modify Turso's parser, add SQL `CALL`, or load a scripting
+VM into Turso's native process boundary.

@@ -49,7 +49,13 @@ defmodule TursoxProcedures.MixProject do
         "README.md",
         "CHANGELOG.md",
         "SECURITY.md",
+        "THIRD_PARTY_NOTICES.md",
         "docs/architecture.md",
+        "docs/catalog.md",
+        "docs/lua-api.md",
+        "docs/composition.md",
+        "docs/security-and-limits.md",
+        "docs/operations.md",
         "docs/compatibility.md"
       ],
       source_ref: "v#{@version}",
@@ -74,6 +80,7 @@ defmodule TursoxProcedures.MixProject do
         "CHANGELOG.md",
         "LICENSE",
         "SECURITY.md",
+        "THIRD_PARTY_NOTICES.md",
         "docs"
       ]
     ]
