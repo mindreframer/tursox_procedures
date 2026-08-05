@@ -1,6 +1,6 @@
 # ROADMAP001 — Tursox Procedures: Sandboxed Transactional Lua
 
-- **Status:** Planned
+- **Status:** Complete — released as `0.1.0`
 - **Target:** `0.1.0`
 - **Primary interface:** Elixir
 - **Procedure language:** Lua 5.3 through the pure-Elixir `lua` package
