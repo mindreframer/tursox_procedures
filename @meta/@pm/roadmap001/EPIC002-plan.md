@@ -7,13 +7,13 @@ Phase 2.1.
 
 ## Progress
 
-- [ ] Phase 2.1: Define validated procedure identity, metadata, language, version, and source-hash contracts.
-- [ ] Phase 2.2: Implement the source behavior and deterministic in-memory source.
-- [ ] Phase 2.3: Design explicit catalog installation SQL and validated configuration.
-- [ ] Phase 2.4: Implement database-backed fetch/list/history and shared source contract tests.
-- [ ] Phase 2.5: Implement immutable publish, enable, disable, and concurrent version allocation.
-- [ ] Phase 2.6: Harden source size/encoding, malformed rows, persistence, isolation, and redaction.
-- [ ] Phase 2.7: Pass the epic gate and create the focused Epic 2 commit.
+- [x] Phase 2.1: Define validated procedure identity, metadata, language, version, and source-hash contracts.
+- [x] Phase 2.2: Implement the source behavior and deterministic in-memory source.
+- [x] Phase 2.3: Design explicit catalog installation SQL and validated configuration.
+- [x] Phase 2.4: Implement database-backed fetch/list/history and shared source contract tests.
+- [x] Phase 2.5: Implement immutable publish, enable, disable, and concurrent version allocation.
+- [x] Phase 2.6: Harden source size/encoding, malformed rows, persistence, isolation, and redaction.
+- [x] Phase 2.7: Pass the epic gate and create the focused Epic 2 commit.
 
 ## Implementation Steps
 
@@ -27,11 +27,11 @@ Phase 2.1.
 
 ## Quality Gate
 
-- [ ] Memory/database adapters pass one contract suite.
-- [ ] Version/hash identity is immutable and deterministic.
-- [ ] Concurrent publication cannot create duplicate versions.
-- [ ] Catalog installation is explicit and injection-safe.
-- [ ] Source never leaks through inspect/errors/telemetry.
+- [x] Memory/database adapters pass one contract suite.
+- [x] Version/hash identity is immutable and deterministic.
+- [x] Concurrent publication cannot create duplicate versions.
+- [x] Catalog installation is explicit and injection-safe.
+- [x] Source never leaks through inspect/errors/telemetry.
 
 ## Commit Rule
 
