@@ -57,6 +57,6 @@ run_stage docs "build documentation with warnings denied" \
 run_stage package "build and inspect the Hex package" \
   mix hex.build --output "${log_root}/tursox_procedures.tar"
 run_stage consumer "compile and smoke an unpacked clean package consumer" \
-  bin/check_package_consumer.sh
+  bash bin/check_package_consumer.sh
 
 printf '[qa/ok] all 7 stages passed; logs: %s\n' "$log_root"
