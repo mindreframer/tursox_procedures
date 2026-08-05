@@ -32,6 +32,10 @@ defmodule TursoxProcedures.MixProject do
 
   defp deps do
     [
+      {:tursox, "== 0.2.1"},
+      {:lua, "== 1.0.2"},
+      {:telemetry, "== 1.4.2"},
+      {:jason, "== 1.4.5"},
       {:ex_doc, "== 0.40.3", only: :dev, runtime: false}
     ]
   end
@@ -45,7 +49,8 @@ defmodule TursoxProcedures.MixProject do
         "README.md",
         "CHANGELOG.md",
         "SECURITY.md",
-        "docs/architecture.md"
+        "docs/architecture.md",
+        "docs/compatibility.md"
       ],
       source_ref: "v#{@version}",
       source_url: @source_url
