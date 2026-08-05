@@ -7,13 +7,13 @@ Phase 3.1; inspect exact Deflua source before relying on a limit or value shape.
 
 ## Progress
 
-- [ ] Phase 3.1: Define Lua entry, arguments, supported values, returns, failures, and isolation semantics.
-- [ ] Phase 3.2: Implement source parsing/compilation and immutable chunk cache identity.
-- [ ] Phase 3.3: Build a fresh finite-limit Deflua VM with opaque private execution context per invocation.
-- [ ] Phase 3.4: Inject arguments and implement strict bidirectional value conversion.
-- [ ] Phase 3.5: Implement `fail`, compile/runtime/conversion errors, and safe source-line attribution.
-- [ ] Phase 3.6: Prove sandbox denial, global isolation, cache correctness, and adversarial limits.
-- [ ] Phase 3.7: Pass the epic gate and create the focused Epic 3 commit.
+- [x] Phase 3.1: Define Lua entry, arguments, supported values, returns, failures, and isolation semantics.
+- [x] Phase 3.2: Implement source parsing/compilation and immutable chunk cache identity.
+- [x] Phase 3.3: Build a fresh finite-limit Deflua VM with opaque private execution context per invocation.
+- [x] Phase 3.4: Inject arguments and implement strict bidirectional value conversion.
+- [x] Phase 3.5: Implement `fail`, compile/runtime/conversion errors, and safe source-line attribution.
+- [x] Phase 3.6: Prove sandbox denial, global isolation, cache correctness, and adversarial limits.
+- [x] Phase 3.7: Pass the epic gate and create the focused Epic 3 commit.
 
 ## Implementation Steps
 
@@ -27,11 +27,11 @@ Phase 3.1; inspect exact Deflua source before relying on a limit or value shape.
 
 ## Quality Gate
 
-- [ ] Fresh VM isolation and immutable chunk reuse are proven.
-- [ ] Supported values round-trip; unsupported/deep/cyclic values fail safely.
-- [ ] All configured Lua limits are finite and deterministic.
-- [ ] Filesystem/network/process/environment/module paths remain unavailable.
-- [ ] Errors expose no source or data values by default.
+- [x] Fresh VM isolation and immutable chunk reuse are proven.
+- [x] Supported values round-trip; unsupported/deep/cyclic values fail safely.
+- [x] All configured Lua limits are finite and deterministic.
+- [x] Filesystem/network/process/environment/module paths remain unavailable.
+- [x] Errors expose no source or data values by default.
 
 ## Commit Rule
 
