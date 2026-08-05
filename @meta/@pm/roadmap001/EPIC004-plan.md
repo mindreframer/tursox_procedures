@@ -7,13 +7,13 @@ Phase 4.1; use only exact public Tursox APIs verified in Epic 1.
 
 ## Progress
 
-- [ ] Phase 4.1: Define top-level call, checkout ownership, transaction mode, policy, and aggregate budget contracts.
-- [ ] Phase 4.2: Implement one host-owned Tursox transaction and opaque checkout-bound execution context.
-- [ ] Phase 4.3: Implement authorized, parameterized, bounded `db.one` and `db.all`.
-- [ ] Phase 4.4: Implement authorized `db.exec` with affected-row metadata and transaction-control rejection.
-- [ ] Phase 4.5: Enforce statement/row/byte/deadline/result budgets and safe database error mapping.
-- [ ] Phase 4.6: Prove commit/rollback, pool-size-one behavior, concurrency isolation, limits, and redaction.
-- [ ] Phase 4.7: Pass the epic gate and create the focused Epic 4 commit.
+- [x] Phase 4.1: Define top-level call, checkout ownership, transaction mode, policy, and aggregate budget contracts.
+- [x] Phase 4.2: Implement one host-owned Tursox transaction and opaque checkout-bound execution context.
+- [x] Phase 4.3: Implement authorized, parameterized, bounded `db.one` and `db.all`.
+- [x] Phase 4.4: Implement authorized `db.exec` with affected-row metadata and transaction-control rejection.
+- [x] Phase 4.5: Enforce statement/row/byte/deadline/result budgets and safe database error mapping.
+- [x] Phase 4.6: Prove commit/rollback, pool-size-one behavior, concurrency isolation, limits, and redaction.
+- [x] Phase 4.7: Pass the epic gate and create the focused Epic 4 commit.
 
 ## Implementation Steps
 
@@ -27,11 +27,11 @@ Phase 4.1; use only exact public Tursox APIs verified in Epic 1.
 
 ## Quality Gate
 
-- [ ] Successful procedure writes commit atomically.
-- [ ] Every failure rolls back all prior writes.
-- [ ] No database operation checks out a second connection.
-- [ ] Policy and aggregate resource limits cannot be bypassed.
-- [ ] Database errors/telemetry are redacted.
+- [x] Successful procedure writes commit atomically.
+- [x] Every failure rolls back all prior writes.
+- [x] No database operation checks out a second connection.
+- [x] Policy and aggregate resource limits cannot be bypassed.
+- [x] Database errors/telemetry are redacted.
 
 ## Commit Rule
 

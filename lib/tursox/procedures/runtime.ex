@@ -1,8 +1,8 @@
 defmodule Tursox.Procedures.Runtime do
   @moduledoc "Isolated, finite Deflua execution for one immutable procedure."
 
-  alias Tursox.Procedures.{Cache, Error, Limits, Procedure}
-  alias Tursox.Procedures.LuaAPI.Core
+  alias Tursox.Procedures.{Cache, Error, Execution, Limits, Procedure}
+  alias Tursox.Procedures.LuaAPI.{Core, Database}
 
   @failure_prefix "__tursox_fail__"
 
@@ -19,13 +19,14 @@ defmodule Tursox.Procedures.Runtime do
         )
         |> Lua.put_private(:procedure_context, private_context)
         |> Lua.load_api(Core)
+        |> Lua.load_api(Database)
         |> Lua.set!([:args], arguments)
 
-      run(lua, chunk, procedure, limits)
+      run(lua, chunk, procedure, limits, private_context)
     end
   rescue
     exception in Lua.RuntimeException ->
-      runtime_error(exception, procedure)
+      runtime_error(exception, procedure, private_context)
 
     exception in Lua.CompilerException ->
       compile_error(exception, procedure)
@@ -53,19 +54,22 @@ defmodule Tursox.Procedures.Runtime do
        }}
   end
 
-  defp run(lua, chunk, procedure, limits) do
+  defp run(lua, chunk, procedure, limits, private_context) do
     case Lua.eval!(lua, chunk) do
       {[], _lua} -> {:ok, nil}
       {[value], _lua} -> normalize_and_bound(value, limits.max_result_bytes, procedure)
       {_values, _lua} -> invalid_result(procedure, "procedure must return zero or one value")
     end
   rescue
-    exception in Lua.RuntimeException -> runtime_error(exception, procedure)
+    exception in Lua.RuntimeException -> runtime_error(exception, procedure, private_context)
     exception in Lua.CompilerException -> compile_error(exception, procedure)
   end
 
+  @doc false
+  def normalize_value(value), do: normalize(value, 0)
+
   defp normalize_and_bound(value, max_bytes, procedure) do
-    with {:ok, normalized} <- normalize(value, 0),
+    with {:ok, normalized} <- normalize_value(value),
          :ok <- encoded_size(normalized, max_bytes, :result) do
       {:ok, normalized}
     else
@@ -73,6 +77,11 @@ defmodule Tursox.Procedures.Runtime do
         {:error, %{error | procedure: procedure.name, version: procedure.version}}
     end
   end
+
+  defp normalize({:userdata, {:tursox_procedures_blob, value}}, _depth) when is_binary(value),
+    do: {:ok, value}
+
+  defp normalize({:userdata, :tursox_procedures_null}, _depth), do: {:ok, nil}
 
   defp normalize(value, _depth)
        when is_nil(value) or is_boolean(value) or is_number(value) or is_binary(value),
@@ -141,9 +150,18 @@ defmodule Tursox.Procedures.Runtime do
     _ -> {:error, conversion_error("value cannot be encoded")}
   end
 
-  defp runtime_error(exception, procedure) do
+  defp runtime_error(exception, procedure, private_context) do
     raw = Exception.message(exception)
 
+    if String.contains?(raw, "__tursox_host_error__") and
+         match?(%Execution.Handle{}, private_context) and Execution.error(private_context) do
+      {:error, Execution.error(private_context)}
+    else
+      user_or_generic_runtime_error(raw, exception, procedure)
+    end
+  end
+
+  defp user_or_generic_runtime_error(raw, exception, procedure) do
     case String.split(raw, @failure_prefix, parts: 2) do
       [_before, payload] ->
         case String.split(payload, <<0>>, parts: 2) do
